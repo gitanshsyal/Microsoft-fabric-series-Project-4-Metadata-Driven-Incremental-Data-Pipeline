@@ -1,0 +1,32 @@
+look up query
+-----------------------------------------------------------
+SELECT
+    '@{pipeline().parameters.folder_name}' AS folder_name,
+    COALESCE(MAX(load_time), '1900-01-01T00:00:00') AS load_time
+FROM file_tracker
+WHERE folder_name = '@{pipeline().parameters.folder_name}'
+
+
+
+if condition
+----------------------------------------------------------------
+@greater(
+    activity('Get Metadata2').output.lastModified,
+    activity('Lookup1').output.firstRow.load_time
+)
+
+script
+----------------------------------------------------------------------
+
+MERGE INTO file_tracker t
+USING (
+    SELECT
+        '@{pipeline().parameters.folder_name}' AS folder_name,
+        '@{activity('Get Metadata2').output.lastModified}' AS load_time
+) s
+ON t.folder_name = s.folder_name
+WHEN MATCHED THEN
+    UPDATE SET t.load_time = s.load_time
+WHEN NOT MATCHED THEN
+    INSERT (folder_name, load_time)
+    VALUES (s.folder_name, s.load_time);
