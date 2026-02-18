@@ -1,0 +1,2 @@
+# Microsoft-fabric-series-Project-4-Metadata-Driven-Incremental-Data-Pipeline
+This project demonstrates the implementation of a folder-based incremental data ingestion pipeline using Azure Data Factory and Lakehouse architecture, followed by data cleaning, transformation, and aggregation using Spark.  The pipeline processes only new or modified files by tracking file metadata, ensuring efficiency and scalability.
